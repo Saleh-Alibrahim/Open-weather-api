@@ -9,7 +9,7 @@ body{
     display: grid;
     grid-auto-rows: minmax(150px, auto);
     /* grid-template-columns:  */
-    height:100vh;
+     /* height:100vh;  */
     background: #f23557;
     color: #f0d43a;
     justify-content: center;
@@ -56,6 +56,21 @@ cursor: pointer;
 label{
     display:block;
     font-size: 27px;
+}
+
+
+#error-message{
+    font-size: 25px;
+    margin-left: 30px;
+    display: inline;
+    color: #f0d43a;
+}
+
+.show-message{
+display: none;
+}
+#zip{
+    display:inline;
 }
 
 input{
