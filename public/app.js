@@ -66,7 +66,10 @@ document.getElementById('generate').addEventListener('click', async function (e)
         // Call the server
         let ServerResponse = await fetch('/', {
             method: 'POST',
-            body: JSON.stringify(projectData)
+            body: JSON.stringify(projectData),
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
 
         let JsonServerResponse = await ServerResponse.json();

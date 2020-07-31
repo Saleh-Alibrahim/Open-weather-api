@@ -15,6 +15,8 @@ router.post('/', (req, res, next) => {
     // Store the data to the array
     projectData.push(req.body);
 
+    console.log('projectData :>> ', projectData);
+
     // Return success
     res.json({ success: true });
 
