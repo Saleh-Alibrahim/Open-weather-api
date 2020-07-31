@@ -37,23 +37,10 @@ document.getElementById('generate').addEventListener('click', async function (e)
         }
 
         // Call the open weather api
-        let openWeatherResponse = await fetch(`${openWeatherUrl}?zip=${zipValue}&appid=${openWeatherApiKey}&units=imperial`);
+        let temperature = await getOpenWeatherApiData();
 
-        // Convert the result to json
-        let jsonOpenWeatherResponse = await openWeatherResponse.json();
-
-        // Show error message if wrong zip number 
-        if (jsonOpenWeatherResponse.cod != 200) {
-            showErrorMessage(jsonOpenWeatherResponse.message);
-            return;
-        }
-        else {
-            hideErrorMessage();
-        }
-
-        // Get the temperature from the response
-        let temperature = jsonOpenWeatherResponse.main.temp;
-
+        // Api call field
+        if (!temperature) { return; }
 
         // Store all the fields to one object
         let projectData = {
@@ -63,18 +50,11 @@ document.getElementById('generate').addEventListener('click', async function (e)
             temperature: temperature
         };
 
-        // Call the server
-        let ServerResponse = await fetch('/', {
-            method: 'POST',
-            body: JSON.stringify(projectData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        let serverResponse = await postDataToServer(projectData);
 
-        let JsonServerResponse = await ServerResponse.json();
 
-        if (JsonServerResponse.success) {
+        // Check if the server successed if so show the result to client  
+        if (serverResponse.success) {
             entryHolder.children[0].innerHTML = `date = ${projectData.date}`;
             entryHolder.children[1].innerHTML = `temp = ${projectData.temperature}`;
             entryHolder.children[2].innerHTML = `content = ${projectData.feelings}`;
@@ -87,6 +67,45 @@ document.getElementById('generate').addEventListener('click', async function (e)
 
 
 });
+
+async function getOpenWeatherApiData() {
+    // Call the open weather api
+    let openWeatherResponse = await fetch(`${openWeatherUrl}?zip=${zipValue}&appid=${openWeatherApiKey}&units=imperial`);
+
+    // Convert the result to json
+    let jsonOpenWeatherResponse = await openWeatherResponse.json();
+
+    // Show error message if wrong zip number 
+    if (jsonOpenWeatherResponse.cod != 200) {
+        showErrorMessage(jsonOpenWeatherResponse.message);
+        return;
+    }
+    else {
+        hideErrorMessage();
+    }
+
+    // Get the temperature from the response
+    return jsonOpenWeatherResponse.main.temp;
+}
+
+async function postDataToServer(projectData) {
+    // Call the server
+    let ServerResponse = await fetch('/', {
+        method: 'POST',
+        body: JSON.stringify(projectData),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    // Convert the server response to json
+    let JsonServerResponse = await ServerResponse.json();
+
+    return JsonServerResponse;
+}
+
+
+
 
 function showErrorMessage(msg) {
     errorMessage.innerHTML = msg;
